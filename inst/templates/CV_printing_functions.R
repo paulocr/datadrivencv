@@ -205,7 +205,6 @@ print_skill_bars <- function(cv, out_of = 5, bar_color = "#969696", bar_backgrou
 }
 
 
-
 #' @description List of all links in document labeled by their superscript integer.
 print_links <- function(cv) {
   n_links <- length(cv$links)
@@ -227,14 +226,18 @@ Links {data-icon=link}
   invisible(cv)
 }
 
-
+#' @description Create linkedin url instead of full url text for better display
+create_linkedin_url <- function(linkedin_url){
+  return (glue::glue("<a href='https://linkedin.com/in/{linkedin_url}'>linkedin</a>"))
+}
 
 #' @description Contact information section with icons
 print_contact_info <- function(cv){
-  glue::glue_data(
+  cv$contact_info %<>% dplyr::mutate(contact =  ifelse(grepl("linkedin", loc), create_linkedin_url(contact), contact))
+  
+    glue::glue_data(
     cv$contact_info,
     "- <i class='fa fa-{icon}'></i> {contact}"
   ) %>% print()
-
   invisible(cv)
 }
